@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emocionário — traduza o que você sente</title>
+<meta name="description" content="Emocionário: um dicionário vivo de 92 emoções humanas para te ajudar a entender o que você sente.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Fraunces:opsz,wght@9..144,900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f2f1ee;
+  --bg-elev:#f2f1ee;
+  --shadow-light:#ffffff;
+  --shadow-dark:#cbc9c4;
+  --text:#28251f;
+  --text-muted:#5f5c53;
+  --accent:#7c4dff;
+  --accent-soft:rgba(124,77,255,0.14);
+  --line:#e2e0d9;
+  --x:50%;
+  --y:50%;
+  --shadow-shift-x:10px;
+  --shadow-shift-y:10px;
+  --serif:'Fraunces', serif;
+  --sans:'Nunito', sans-serif;
+}
+
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#242320;
+    --shadow-light:#2d2c28;
+    --shadow-dark:#181713;
+    --text:#f5f3ee;
+    --text-muted:#c2beb2;
+    --accent:#bda2ff;
+    --accent-soft:rgba(189,162,255,0.18);
+    --line:#38362f;
+  }
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+
+body{
+  margin:0;
+  min-height:100vh;
+  background:var(--bg);
+  font-family:var(--sans);
+  font-weight:600;
+  font-size:16px;
+  color:var(--text);
+  position:relative;
+  overflow-x:hidden;
+  transition:background 0.4s ease, color 0.4s ease;
+  -webkit-font-smoothing:antialiased;
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:0.03;
+  z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background:radial-gradient(650px circle at var(--x) var(--y), var(--accent-soft), transparent 60%);
+  transition:background 0.05s linear;
+  z-index:0;
+}
+
+.wrap{
+  position:relative;
+  z-index:1;
+  max-width:640px;
+  margin:0 auto;
+  padding:28px 20px 80px;
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+  min-height:100vh;
+}
+
+/* ---------- Header ---------- */
+.top{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:6px;
+  text-align:center;
+  padding-top:8px;
+}
+
+.brand{
+  font-family:var(--serif);
+  font-style:normal;
+  font-weight:900;
+  font-size:2.6rem;
+  letter-spacing:-0.02em;
+  margin:0;
+  color:var(--text);
+  line-height:1.05;
+}
+
+.brand span{
+  color:var(--accent);
+}
+
+.brand-dot{
+  color:var(--accent) !important;
+}
+
+.tagline{
+  font-size:0.92rem;
+  font-weight:700;
+  color:var(--text-muted);
+  margin:0;
+  max-width:36ch;
+}
+
+/* ---------- Tabs ---------- */
+.tabs{
+  display:flex;
+  gap:6px;
+  background:var(--bg);
+  border-radius:18px;
+  padding:6px;
+  box-shadow: inset 4px 4px 9px var(--shadow-dark), inset -4px -4px 9px var(--shadow-light);
+  position:sticky;
+  top:12px;
+  z-index:5;
+}
+
+.tab-btn{
+  flex:1;
+  border:none;
+  background:transparent;
+  color:var(--text-muted);
+  font-family:var(--sans);
+  font-weight:800;
+  font-size:0.86rem;
+  padding:10px 8px;
+  border-radius:13px;
+  cursor:pointer;
+  transition: all 0.25s ease;
+}
+
+.tab-btn.active{
+  background:var(--bg);
+  color:var(--accent);
+  box-shadow: 4px 4px 9px var(--shadow-dark), -4px -4px 9px var(--shadow-light);
+}
+
+/* ---------- Views ---------- */
+.view{
+  display:none;
+  flex-direction:column;
+  gap:20px;
+  animation: viewIn 0.35s ease;
+}
+
+.view.active{display:flex;}
+
+@keyframes viewIn{
+  from{opacity:0; transform:translateY(8px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* ---------- Agente emocional ---------- */
+.agent-zone{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:14px;
+}
+
+.emoji-stage{
+  width:120px;
+  height:120px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:50%;
+  background:var(--bg);
+  box-shadow: inset 7px 7px 14px var(--shadow-dark), inset -7px -7px 14px var(--shadow-light);
+  position:relative;
+  cursor:default;
+}
+
+#agent-emoji{
+  font-size:3.4rem;
+  display:inline-block;
+  transition: transform 0.3s ease, filter 0.35s ease, opacity 0.35s ease;
+  animation: float 3s ease-in-out infinite;
+}
+
+.emoji-stage:hover #agent-emoji{
+  animation: wobble 0.6s ease;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-8px);}
+}
+
+@keyframes wobble{
+  0%,100%{transform:rotate(0deg) translateY(-8px);}
+  25%{transform:rotate(-8deg) translateY(-10px);}
+  75%{transform:rotate(8deg) translateY(-10px);}
+}
+
+.thinking #agent-emoji{
+  animation: pulseThink 0.5s ease-in-out infinite;
+}
+
+@keyframes pulseThink{
+  0%,100%{transform:scale(1) rotate(0deg);}
+  50%{transform:scale(1.15) rotate(8deg);}
+}
+
+.emoji-morph-out{
+  opacity:0;
+  filter:blur(6px);
+  transform:scale(0.85);
+}
+
+.thinking-ring{
+  position:absolute;
+  inset:-6px;
+  border-radius:50%;
+  border:3px solid transparent;
+  border-top-color:var(--accent);
+  opacity:0;
+  transition:opacity 0.2s ease;
+}
+
+.thinking .thinking-ring{
+  opacity:1;
+  animation: spin 0.9s linear infinite;
+}
+
+@keyframes spin{ to{transform:rotate(360deg);} }
+
+.agent-status{
+  font-size:0.78rem;
+  color:var(--text-muted);
+  font-weight:700;
+  letter-spacing:0.03em;
+  text-transform:uppercase;
+  min-height:1em;
+}
+
+/* ---------- Input ---------- */
+.input-card{
+  background:var(--bg);
+  border-radius:24px;
+  padding:20px;
+  box-shadow: var(--shadow-shift-x) var(--shadow-shift-y) 22px var(--shadow-dark), calc(-1 * var(--shadow-shift-x)) calc(-1 * var(--shadow-shift-y)) 22px var(--shadow-light);
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  transition: box-shadow 0.15s ease, background 0.4s ease;
+}
+
+textarea{
+  width:100%;
+  min-height:120px;
+  resize:vertical;
+  border:none;
+  outline:none;
+  border-radius:18px;
+  padding:16px;
+  font-family:var(--sans);
+  font-size:1rem;
+  color:var(--text);
+  background:var(--bg);
+  box-shadow: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light);
+  transition: box-shadow 0.3s ease, background 0.4s ease, color 0.4s ease;
+}
+
+textarea:focus-visible, textarea:focus{
+  box-shadow: inset 6px 6px 14px var(--shadow-dark), inset -6px -6px 14px var(--shadow-light), 0 0 0 3px var(--accent-soft);
+}
+
+textarea::placeholder{ color:var(--text-muted); }
+
+.char-hint{
+  font-size:0.74rem;
+  color:var(--text-muted);
+  text-align:right;
+  margin-top:-8px;
+}
+
+button.primary{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:16px;
+  background:var(--bg);
+  color:var(--accent);
+  font-family:var(--sans);
+  font-weight:800;
+  font-size:1rem;
+  cursor:pointer;
+  box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light);
+  transition: all 0.15s ease;
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+
+button.primary:focus-visible{
+  outline:none;
+  box-shadow: 6px 6px 12px var(--shadow-dark), -6px -6px 12px var(--shadow-light), 0 0 0 3px var(--accent-soft);
+}
+
+button.primary:active{
+  box-shadow: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
+  transform:translateY(1px) scale(0.99);
+}
+
+button.primary:disabled{ opacity:0.6; cursor:not-allowed; }
+
+.ripple{
+  position:absolute;
+  border-radius:50%;
+  background:var(--accent-soft);
+  transform:scale(0);
+  animation:ripple-anim 0.6s ease-out forwards;
+  pointer-events:none;
+  z-index:-1;
+}
+
+@keyframes ripple-anim{ to{ transform:scale(3.2); opacity:0; } }
+
+/* ---------- Resultado ---------- */
+.result-card{
+  border-radius:22px;
+  padding:22px;
+  background:var(--bg);
+  box-shadow: 6px 6px 14px var(--shadow-dark), -6px -6px 14px var(--shadow-light);
+  display:none;
+  flex-direction:column;
+  gap:16px;
+  border-left:4px solid var(--accent);
+}
+
+.result-card.show{ display:flex; }
+
+.result-block{
+  opacity:0;
+  transform:translateY(14px);
+  transition: opacity 0.45s ease, transform 0.45s ease;
+}
+
+.result-card.show .result-block{ opacity:1; transform:translateY(0); }
+.result-card.show .result-block:nth-child(1){transition-delay:0.05s;}
+.result-card.show .result-block:nth-child(2){transition-delay:0.2s;}
+.result-card.show .result-block:nth-child(3){transition-delay:0.35s;}
+.result-card.show .result-block:nth-child(4){transition-delay:0.48s;}
+
+.result-emotion{
+  font-size:1.3rem;
+  font-weight:800;
+  color:var(--text);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.result-emotion .chip{
+  font-size:0.68rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:0.04em;
+  color:var(--accent);
+  background:var(--accent-soft);
+  padding:4px 10px;
+  border-radius:20px;
+}
+
+.confidence-badge{
+  font-size:0.7rem;
+  font-weight:700;
+  color:var(--text-muted);
+  padding-left:2px;
+}
+
+.confidence-badge.confidence-forte{ color:#2f9e5c; }
+.confidence-badge.confidence-moderada{ color:var(--accent); }
+.confidence-badge.confidence-baixa{ color:var(--text-muted); font-style:italic; }
+
+.result-label{
+  font-size:0.74rem;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--text-muted);
+  font-weight:800;
+  margin-bottom:4px;
+}
+
+.result-text{ font-size:0.98rem; font-weight:600; line-height:1.6; color:var(--text); }
+
+.result-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:2px;
+}
+
+.ghost-btn{
+  flex:1 1 140px;
+  min-width:0;
+  padding:12px 10px;
+  border-radius:12px;
+  border:none;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  font-weight:700;
+  font-size:0.82rem;
+  line-height:1.3;
+  white-space:normal;
+  text-align:center;
+  cursor:pointer;
+  box-shadow: 3px 3px 7px var(--shadow-dark), -3px -3px 7px var(--shadow-light);
+  transition:all 0.15s ease;
+}
+
+.ghost-btn:active{
+  box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+}
+
+/* ---------- Histórico ---------- */
+.history{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.history-title{
+  font-size:0.78rem;
+  text-transform:uppercase;
+  letter-spacing:0.08em;
+  color:var(--text-muted);
+  font-weight:700;
+  padding-left:4px;
+}
+
+.history-item{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:16px;
+  background:var(--bg);
+  box-shadow: 3px 3px 8px var(--shadow-dark), -3px -3px 8px var(--shadow-light);
+  cursor:pointer;
+  transition: transform 0.15s ease;
+}
+
+.history-item:hover{ transform:translateX(2px); }
+
+.history-emoji{ font-size:1.4rem; }
+
+.history-meta{ display:flex; flex-direction:column; gap:2px; flex:1; min-width:0; }
+
+.history-emotion{ font-weight:800; font-size:0.9rem; }
+
+.history-snippet{
+  font-size:0.78rem;
+  color:var(--text-muted);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.history-time{ font-size:0.7rem; color:var(--text-muted); white-space:nowrap; }
+
+/* ---------- Explorar ---------- */
+.search-bar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:var(--bg);
+  border-radius:16px;
+  padding:12px 16px;
+  box-shadow: inset 4px 4px 9px var(--shadow-dark), inset -4px -4px 9px var(--shadow-light);
+}
+
+.search-bar input{
+  flex:1;
+  border:none;
+  outline:none;
+  background:transparent;
+  font-family:var(--sans);
+  font-size:0.95rem;
+  color:var(--text);
+}
+
+.search-bar input::placeholder{ color:var(--text-muted); }
+.search-icon{ opacity:0.5; font-size:0.95rem; }
+
+.category-scroller{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  padding:4px 2px 4px;
+}
+
+.cat-chip{
+  flex:0 0 auto;
+  padding:8px 14px;
+  border-radius:14px;
+  border:none;
+  background:var(--bg);
+  color:var(--text-muted);
+  font-family:var(--sans);
+  font-weight:700;
+  font-size:0.78rem;
+  cursor:pointer;
+  box-shadow: 3px 3px 7px var(--shadow-dark), -3px -3px 7px var(--shadow-light);
+  transition: all 0.2s ease;
+  white-space:nowrap;
+}
+
+.cat-chip.active{
+  color:var(--accent);
+  box-shadow: inset 2px 2px 5px var(--shadow-dark), inset -2px -2px 5px var(--shadow-light);
+}
+
+.emotion-grid{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:10px;
+}
+
+.emotion-tile{
+  aspect-ratio:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border-radius:20px;
+  background:var(--bg);
+  box-shadow: 4px 4px 9px var(--shadow-dark), -4px -4px 9px var(--shadow-light);
+  border:none;
+  cursor:pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  padding:10px;
+}
+
+.emotion-tile:hover{ transform:translateY(-3px); }
+.emotion-tile:active{
+  box-shadow: inset 3px 3px 7px var(--shadow-dark), inset -3px -3px 7px var(--shadow-light);
+  transform:translateY(0);
+}
+
+.emotion-tile .tile-emoji{ font-size:1.9rem; line-height:1; }
+
+.emotion-tile .tile-name{
+  font-size:0.72rem;
+  font-weight:800;
+  text-align:center;
+  color:var(--text);
+  line-height:1.25;
+}
+
+.empty-state{
+  text-align:center;
+  color:var(--text-muted);
+  font-size:0.9rem;
+  padding:40px 20px;
+}
+
+/* ---------- Modal de detalhe ---------- */
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(20,18,14,0.5);
+  backdrop-filter:blur(3px);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:50;
+  animation:fadeIn 0.25s ease;
+  padding:20px;
+}
+
+.modal-backdrop.show{ display:flex; }
+
+@keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+
+.modal-card{
+  width:100%;
+  max-width:520px;
+  max-height:min(88vh, 720px);
+  background:var(--bg);
+  border-radius:26px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+  animation:modalIn 0.3s cubic-bezier(.2,.8,.2,1);
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  overflow:hidden;
+}
+
+@keyframes modalIn{
+  from{ transform:scale(0.94) translateY(16px); opacity:0; }
+  to{ transform:scale(1) translateY(0); opacity:1; }
+}
+
+.modal-scroll{
+  overflow-y:auto;
+  padding:30px 26px 30px;
+  -webkit-overflow-scrolling:touch;
+}
+
+.modal-handle{ display:none; }
+
+.modal-emoji{
+  font-size:3.2rem;
+  text-align:center;
+  display:block;
+  margin-bottom:8px;
+}
+
+.modal-title{
+  font-family:var(--serif);
+  font-weight:900;
+  font-style:normal;
+  font-size:1.6rem;
+  text-align:center;
+  margin:0 0 6px;
+  color:var(--text);
+}
+
+.modal-category{
+  display:block;
+  text-align:center;
+  font-size:0.7rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  color:var(--accent);
+  margin-bottom:22px;
+}
+
+.modal-section{ margin-bottom:18px; }
+.modal-section:last-child{ margin-bottom:4px; }
+
+.modal-close{
+  position:absolute;
+  top:16px;
+  right:16px;
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  border:none;
+  background:var(--bg);
+  color:var(--text-muted);
+  font-size:1rem;
+  cursor:pointer;
+  box-shadow: 3px 3px 7px var(--shadow-dark), -3px -3px 7px var(--shadow-light);
+  z-index:2;
+}
+
+.modal-card{ position:relative; }
+
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+}
+
+footer.credit{
+  text-align:center;
+  font-size:0.72rem;
+  color:var(--text-muted);
+  padding-top:8px;
+}
+
+@media (min-width:641px){
+  .wrap{ max-width:720px; }
+  .emotion-grid{ grid-template-columns:repeat(4, 1fr); }
+  .brand{ font-size:3rem; }
+}
+
+@media (max-width:420px){
+  .wrap{ padding:18px 12px 70px; gap:18px; }
+  .brand{ font-size:2.1rem; }
+  .tagline{ font-size:0.85rem; }
+  .tabs{ top:8px; }
+  .emoji-stage{ width:100px; height:100px; }
+  #agent-emoji{ font-size:2.8rem; }
+  .input-card{ padding:16px; border-radius:20px; }
+  textarea{ min-height:100px; padding:14px; }
+  .emotion-grid{ grid-template-columns:repeat(3, 1fr); gap:8px; }
+  .result-text{ font-size:0.92rem; }
+  .result-emotion{ font-size:1.15rem; flex-wrap:wrap; }
+  .modal-scroll{ padding:26px 20px 26px; }
+  .result-actions{ flex-direction:column; }
+  .ghost-btn{ flex:1 1 auto; }
+}
+
+@media (max-width:360px){
+  .brand{ font-size:1.8rem; }
+  .emotion-grid{ grid-template-columns:repeat(2, 1fr); }
+  .tab-btn{ font-size:0.8rem; padding:9px 6px; }
+  .cat-chip{ padding:7px 12px; font-size:0.74rem; }
+}
+
+@media (max-width:320px){
+  .wrap{ padding:14px 10px 60px; }
+  .emoji-stage{ width:88px; height:88px; }
+  #agent-emoji{ font-size:2.4rem; }
+}
+
+@media (prefers-reduced-motion: reduce){
+  #agent-emoji, .emoji-stage:hover #agent-emoji, .thinking #agent-emoji,
+  .thinking-ring, .ripple, .result-block, .view, .modal-card, .modal-backdrop{
+    animation:none !important;
+    transition-duration:0.01ms !important;
+  }
+  body::before{ transition:none; }
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <h1 class="brand" id="brand-home" role="button" tabindex="0" aria-label="Voltar ao início">Emocion<span>á</span>rio<span class="brand-dot">.</span></h1>
+    <p class="tagline">Um dicionário vivo de 92 emoções humanas para te ajudar a entender o que você sente.</p>
+  </div>
+
+  <nav class="tabs" role="tablist" aria-label="Modo do Emocionário">
+    <button class="tab-btn active" id="tab-traduzir" role="tab" aria-selected="true">Traduzir</button>
+    <button class="tab-btn" id="tab-explorar" role="tab" aria-selected="false">Explorar</button>
+  </nav>
+
+  <!-- ===================== VIEW: TRADUZIR ===================== -->
+  <section class="view active" id="view-traduzir">
+
+    <div class="agent-zone">
+      <div class="emoji-stage" id="emoji-stage" role="img" aria-label="Agente emocional">
+        <div class="thinking-ring"></div>
+        <span id="agent-emoji">😌</span>
+      </div>
+      <div class="agent-status" id="agent-status">pronto para ouvir</div>
+    </div>
+
+    <div class="input-card">
+      <textarea id="text-input" placeholder="Escreva o que você está sentindo, sem se preocupar em explicar direito..." aria-label="Descreva o que você está sentindo" maxlength="600"></textarea>
+      <div class="char-hint"><span id="char-count">0</span>/600</div>
+      <button class="primary" id="translate-btn" type="button">Traduzir</button>
+    </div>
+
+    <div class="result-card" id="result-card" role="status" aria-live="polite">
+      <div class="result-block">
+        <div class="result-emotion">
+          <span id="result-emoji-inline"></span>
+          <span id="result-emotion"></span>
+          <span class="chip" id="result-categoria"></span>
+        </div>
+        <span class="confidence-badge" id="result-confianca"></span>
+      </div>
+      <div class="result-block">
+        <div class="result-label">O que pode estar causando isso</div>
+        <div class="result-text" id="result-explicacao"></div>
+      </div>
+      <div class="result-block">
+        <div class="result-label">O que você pode fazer agora</div>
+        <div class="result-text" id="result-atitude"></div>
+      </div>
+      <div class="result-block result-actions">
+        <button class="ghost-btn" id="try-again-btn" type="button">Escrever de novo</button>
+        <button class="ghost-btn" id="explore-emotion-btn" type="button">Ver mais</button>
+      </div>
+    </div>
+
+    <div class="history" id="history-zone" style="display:none;">
+      <div class="history-title">Seu percurso emocional de hoje</div>
+      <div id="history-list"></div>
+    </div>
+
+  </section>
+
+  <!-- ===================== VIEW: EXPLORAR ===================== -->
+  <section class="view" id="view-explorar">
+
+    <div class="search-bar">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="search-input" placeholder="Buscar emoção (ex: raiva, saudade, alívio...)" aria-label="Buscar emoção">
+    </div>
+
+    <div class="category-scroller" id="category-scroller">
+      <button class="cat-chip active" data-cat="todas">Todas (92)</button>
+      <button class="cat-chip" data-cat="medo">Medo</button>
+      <button class="cat-chip" data-cat="tristeza">Tristeza</button>
+      <button class="cat-chip" data-cat="raiva">Raiva</button>
+      <button class="cat-chip" data-cat="vergonha">Vergonha</button>
+      <button class="cat-chip" data-cat="conexao">Conexão</button>
+      <button class="cat-chip" data-cat="alegria">Alegria</button>
+      <button class="cat-chip" data-cat="existencial">Complexas</button>
+    </div>
+
+    <div class="emotion-grid" id="emotion-grid"></div>
+    <div class="empty-state" id="empty-state" style="display:none;">Nenhuma emoção encontrada com esse termo.</div>
+
+  </section>
+
+  <footer class="credit">Emocionário · inspirado no repertório de emoções humanas · feito com cuidado</footer>
+
+</div>
+
+<div class="modal-backdrop" id="modal-backdrop">
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <button class="modal-close" id="modal-close" aria-label="Fechar">✕</button>
+    <div class="modal-scroll">
+      <span class="modal-emoji" id="modal-emoji"></span>
+      <h2 class="modal-title" id="modal-title"></h2>
+      <span class="modal-category" id="modal-categoria"></span>
+      <div class="modal-section">
+        <div class="result-label">O que pode estar causando isso</div>
+        <div class="result-text" id="modal-explicacao"></div>
+      </div>
+      <div class="modal-section">
+        <div class="result-label">O que você pode fazer agora</div>
+        <div class="result-text" id="modal-atitude"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const EMOCOES = [{"id": 1, "emocao": "Ansiedade", "emoji": "😰", "categoria": "medo", "keywords": ["medo", "futuro", "preocupação", "preocupacao", "suor", "tremor", "ansiedade", "ansioso", "ansiosa"], "explicacoes": ["Sua mente está tentando prever o futuro para te proteger, mas acaba antecipando ameaças que talvez nem aconteçam.", "Você está vivendo mentalmente um futuro que ainda não chegou, e o corpo reage como se o perigo já estivesse aqui."], "atitudes": ["Respire fundo por 4 segundos, segure por 4, solte por 4. Volte para o que está acontecendo agora, neste minuto.", "Pergunte-se: o que eu consigo controlar agora, hoje? Foque só nisso por alguns minutos."], "definicao": "Sua mente está tentando prever o futuro para te proteger, mas acaba antecipando ameaças que talvez nem aconteçam."}, {"id": 2, "emocao": "Medo", "emoji": "😨", "categoria": "medo", "keywords": ["assustado", "assustada", "perigo", "fobia", "medo de", "com medo"], "explicacoes": ["Seu cérebro identificou algo como perigo real ou imaginado e está te preparando para reagir.", "O corpo entrou em alerta porque algo pareceu ameaçador demais para ignorar."], "atitudes": ["Nomeie 5 coisas que você vê agora ao seu redor. Isso ajuda o corpo a lembrar que está seguro.", "Coloque os pés firmes no chão e sinta o apoio. Você está aqui, agora, em segurança."], "definicao": "Seu cérebro identificou algo como perigo real ou imaginado e está te preparando para reagir."}, {"id": 3, "emocao": "Pânico", "emoji": "😱", "categoria": "medo", "keywords": ["pânico", "panico", "desespero súbito", "não consigo respirar", "coração disparado", "surto"], "explicacoes": ["Uma onda súbita e intensa de medo tomou conta do corpo todo, como se o perigo fosse imediato.", "O sistema de alarme do corpo disparou no máximo, mesmo que a ameaça real seja incerta."], "atitudes": ["Concentre-se só na respiração: inspire devagar pelo nariz e solte lentamente pela boca, várias vezes.", "Se possível, procure um lugar seguro e calmo, e lembre-se: isso vai passar, mesmo que pareça eterno agora."], "definicao": "Uma onda súbita e intensa de medo tomou conta do corpo todo, como se o perigo fosse imediato."}, {"id": 4, "emocao": "Insegurança", "emoji": "🫣", "categoria": "medo", "keywords": ["sou ruim", "não vou conseguir", "nao vou conseguir", "me acham", "feio", "feia", "incapaz"], "explicacoes": ["Você está duvidando da sua própria capacidade ou valor, muitas vezes comparando-se a um padrão irreal.", "Uma voz interna está sendo mais dura com você do que seria com qualquer outra pessoa."], "atitudes": ["Liste 3 coisas que você já fez bem, por menores que pareçam. Elas contam.", "Fale consigo mesmo como falaria com alguém que você ama."], "definicao": "Você está duvidando da sua própria capacidade ou valor, muitas vezes comparando-se a um padrão irreal."}, {"id": 5, "emocao": "Vulnerabilidade", "emoji": "🫥", "categoria": "medo", "keywords": ["exposto", "exposta", "frágil", "fragil", "desprotegido", "me abrir", "medo de me abrir"], "explicacoes": ["Você se sente desprotegido diante de algo ou alguém, como se pudesse se machucar com facilidade.", "Abrir-se ou se expor trouxe a sensação de estar sem defesas."], "atitudes": ["Lembre-se que se permitir ser vulnerável com quem merece confiança é coragem, não fraqueza.", "Escolha com cuidado com quem compartilhar o que sente, e respeite seu próprio ritmo."], "definicao": "Você se sente desprotegido diante de algo ou alguém, como se pudesse se machucar com facilidade."}, {"id": 6, "emocao": "Desconfiança", "emoji": "🤨", "categoria": "medo", "keywords": ["desconfio", "não acredito", "nao acredito", "mentira", "suspeito", "será que"], "explicacoes": ["Uma experiência anterior te ensinou a ter cautela, e agora essa cautela está ativada.", "Algo no discurso ou comportamento do outro não fechou, e sua mente está em alerta."], "atitudes": ["Observe fatos concretos antes de decidir, sem ignorar sua intuição, mas também sem se precipitar.", "Se possível, converse abertamente para esclarecer a dúvida em vez de carregá-la sozinho."], "definicao": "Uma experiência anterior te ensinou a ter cautela, e agora essa cautela está ativada."}, {"id": 7, "emocao": "Timidez", "emoji": "😊", "categoria": "medo", "keywords": ["tímido", "timido", "tímida", "timida", "vergonha de falar", "travo", "gaguejo"], "explicacoes": ["Você sente um receio de se expor socialmente, mesmo quando gostaria de participar mais.", "O medo do julgamento alheio está deixando a interação mais difícil do que precisaria ser."], "atitudes": ["Comece com pequenos passos, como uma frase curta em um grupo pequeno, antes de ambientes maiores.", "Lembre-se que a maioria das pessoas está mais focada em si mesma do que em te julgar."], "definicao": "Você sente um receio de se expor socialmente, mesmo quando gostaria de participar mais."}, {"id": 8, "emocao": "Constrangimento", "emoji": "😖", "categoria": "medo", "keywords": ["constrangido", "constrangida", "sem graça", "que vergonha", "gelei"], "explicacoes": ["Uma situação social saiu do esperado e você se sentiu exposto de um jeito desconfortável.", "Algo pequeno aconteceu, mas na hora pareceu enorme e visível para todos."], "atitudes": ["Respire e lembre-se: a maioria dos momentos assim é esquecida pelos outros muito mais rápido do que por você.", "Se fizer sentido, ria da situação. Muitas vezes ela é menos grave do que parece por dentro."], "definicao": "Uma situação social saiu do esperado e você se sentiu exposto de um jeito desconfortável."}, {"id": 9, "emocao": "Sobrecarga sensorial", "emoji": "🌪️", "categoria": "medo", "keywords": ["barulho demais", "muita informação", "estímulo demais", "estimulo demais", "não aguento tanta coisa"], "explicacoes": ["Seu sistema nervoso está recebendo mais estímulos do que consegue processar com conforto.", "Sons, luzes ou demandas em excesso estão deixando tudo mais intenso do que deveria ser."], "atitudes": ["Se possível, busque um ambiente mais quieto e com menos estímulos por alguns minutos.", "Reduza uma fonte de estímulo por vez: desligue uma tela, abaixe um som, feche uma aba."], "definicao": "Seu sistema nervoso está recebendo mais estímulos do que consegue processar com conforto."}, {"id": 10, "emocao": "Impotência", "emoji": "🫤", "categoria": "medo", "keywords": ["não posso fazer nada", "nao posso fazer nada", "sem controle", "não depende de mim", "impotente"], "explicacoes": ["Você está diante de uma situação onde sente que suas ações não fazem diferença.", "A sensação de não ter controle sobre o resultado é uma das mais desgastantes que existem."], "atitudes": ["Identifique a menor coisa que ainda está sob seu controle, mesmo que pequena, e aja nela.", "Aceitar o que não pode ser mudado agora não é desistência, é preservar sua energia."], "definicao": "Você está diante de uma situação onde sente que suas ações não fazem diferença."}, {"id": 11, "emocao": "Tristeza", "emoji": "😢", "categoria": "tristeza", "keywords": ["chorar", "vazio", "dor", "perda", "escuro", "triste"], "explicacoes": ["Algo importante para você foi perdido, machucado ou está faltando, e seu coração está processando isso.", "Existe um vazio que fala sobre algo ou alguém que importava muito para você."], "atitudes": ["Permita-se sentir por alguns minutos sem se cobrar. Chorar também é uma forma de cuidar de si.", "Procure um lugar tranquilo e deixe a emoção passar por você, sem lutar contra ela."], "definicao": "Algo importante para você foi perdido, machucado ou está faltando, e seu coração está processando isso."}, {"id": 12, "emocao": "Solidão", "emoji": "🥺", "categoria": "tristeza", "keywords": ["sozinho", "sozinha", "ninguém", "ninguem", "isolado", "isolada", "me sinto só", "me sinto so"], "explicacoes": ["Você está sentindo falta de conexão real com alguém, mesmo que existam pessoas ao seu redor.", "Falta a sensação de ser visto e compreendido por alguém, não apenas companhia."], "atitudes": ["Envie uma mensagem para alguém que você confia, mesmo que seja só um 'oi, tudo bem?'.", "Procure um espaço, físico ou online, onde você se sinta parte de algo."], "definicao": "Você está sentindo falta de conexão real com alguém, mesmo que existam pessoas ao seu redor."}, {"id": 13, "emocao": "Melancolia", "emoji": "🌧️", "categoria": "tristeza", "keywords": ["melancolia", "melancólico", "melancolico", "tristeza suave", "dia cinza"], "explicacoes": ["Uma tristeza suave e silenciosa tomou conta, sem uma causa clara e intensa.", "É como um véu cinza sobre o dia, sem drama, mas presente."], "atitudes": ["Permita-se esse estado contemplativo, talvez com música, chá ou um momento de quietude.", "Escreva sobre o que sente, mesmo sem entender totalmente. Colocar em palavras já ajuda."], "definicao": "Uma tristeza suave e silenciosa tomou conta, sem uma causa clara e intensa."}, {"id": 14, "emocao": "Saudade", "emoji": "🥲", "categoria": "tristeza", "keywords": ["saudade", "sinto falta", "queria voltar"], "explicacoes": ["Algo ou alguém que foi importante para você não está mais presente do jeito que estava antes.", "O coração está lembrando com carinho de um tempo, lugar ou pessoa que já passou."], "atitudes": ["Permita-se sentir essa saudade com ternura, e se quiser, reviva algo dessa lembrança hoje.", "Se for possível, entre em contato com quem ou o que você sente falta."], "definicao": "Algo ou alguém que foi importante para você não está mais presente do jeito que estava antes."}, {"id": 15, "emocao": "Desânimo", "emoji": "😞", "categoria": "tristeza", "keywords": ["desânimo", "desanimo", "sem vontade de nada", "não tenho força", "nao tenho forca"], "explicacoes": ["Sua energia para seguir em frente está baixa, e as coisas parecem mais pesadas do que o normal.", "Falta o combustível emocional que normalmente te move para agir."], "atitudes": ["Comece com algo mínimo, uma única ação pequena, sem exigir de si o dia inteiro produtivo.", "Descanse sem culpa. Às vezes o desânimo é só um sinal de que é hora de parar um pouco."], "definicao": "Sua energia para seguir em frente está baixa, e as coisas parecem mais pesadas do que o normal."}, {"id": 16, "emocao": "Desilusão", "emoji": "💭", "categoria": "tristeza", "keywords": ["desiludido", "desiludida", "não era isso", "achei que seria diferente"], "explicacoes": ["Uma expectativa importante que você tinha não se confirmou, e isso doeu.", "A diferença entre o que você esperava e o que aconteceu de fato gerou essa sensação de queda."], "atitudes": ["Dê a si mesmo tempo para reajustar a expectativa, sem se culpar por ter sonhado.", "Pergunte-se o que essa desilusão te ensina sobre o que você realmente valoriza."], "definicao": "Uma expectativa importante que você tinha não se confirmou, e isso doeu."}, {"id": 17, "emocao": "Vazio existencial", "emoji": "⚫", "categoria": "tristeza", "keywords": ["vazio por dentro", "sem sentido", "pra que tudo isso", "sem propósito", "sem proposito"], "explicacoes": ["Você está questionando o sentido do que faz, e isso é mais comum do que parece em momentos de transição.", "Falta uma sensação de propósito claro guiando os seus dias no momento."], "atitudes": ["Pequenas ações com significado, mesmo simples, ajudam a reconstruir esse sentido aos poucos.", "Se esse vazio persistir por muito tempo, conversar com um profissional pode trazer clareza."], "definicao": "Você está questionando o sentido do que faz, e isso é mais comum do que parece em momentos de transição."}, {"id": 18, "emocao": "Decepção", "emoji": "🙁", "categoria": "tristeza", "keywords": ["decepcionado", "decepcionada", "me decepcionou", "esperava mais"], "explicacoes": ["Alguém ou algo não correspondeu ao que você esperava, e isso gerou uma sensação de queda.", "A distância entre a expectativa e a realidade pesou no seu coração."], "atitudes": ["Reavalie a expectativa original: ela era justa e clara desde o início?", "Converse sobre o que sentiu, se envolver outra pessoa, em vez de guardar só para si."], "definicao": "Alguém ou algo não correspondeu ao que você esperava, e isso gerou uma sensação de queda."}, {"id": 19, "emocao": "Rejeição", "emoji": "💔", "categoria": "tristeza", "keywords": ["não me quis", "nao me quis", "demitido", "demitida", "ignorado", "ignorada", "fora"], "explicacoes": ["Você sentiu que não foi escolhido, aceito ou valorizado por alguém ou algo importante.", "Doeu perceber que não era a prioridade ou a escolha de alguém que importava."], "atitudes": ["Lembre-se que uma recusa não define seu valor. Ela fala sobre a situação, não sobre quem você é.", "Permita-se sentir a dor, mas evite generalizar isso para tudo em sua vida."], "definicao": "Você sentiu que não foi escolhido, aceito ou valorizado por alguém ou algo importante."}, {"id": 20, "emocao": "Abandono", "emoji": "🚪", "categoria": "tristeza", "keywords": ["me abandonou", "abandonada", "abandonado", "foi embora", "me deixou"], "explicacoes": ["Alguém importante se afastou ou partiu, deixando uma sensação de vazio e desamparo.", "A ausência de alguém que você contava está pesando mais do que gostaria de admitir."], "atitudes": ["Busque apoio em quem ainda está presente na sua vida, mesmo que pareça difícil pedir.", "Lembre-se que essa dor é sobre a ausência do outro, não sobre o seu valor como pessoa."], "definicao": "Alguém importante se afastou ou partiu, deixando uma sensação de vazio e desamparo."}, {"id": 21, "emocao": "Raiva", "emoji": "😡", "categoria": "raiva", "keywords": ["ódio", "odio", "bater", "gritar", "injustiça", "injustica", "irritado", "raiva"], "explicacoes": ["Um limite seu foi ultrapassado ou algo pareceu profundamente injusto, e essa energia veio para te defender.", "Algo tocou num ponto sensível seu, e o corpo reagiu com força para te proteger."], "atitudes": ["Antes de reagir, conte até dez ou saia do ambiente por um momento. Depois, coloque em palavras o que te machucou.", "Gaste essa energia em movimento, uma caminhada rápida ajuda antes de qualquer conversa difícil."], "definicao": "Um limite seu foi ultrapassado ou algo pareceu profundamente injusto, e essa energia veio para te defender."}, {"id": 22, "emocao": "Fúria", "emoji": "🤬", "categoria": "raiva", "keywords": ["fúria", "furia", "enfurecido", "enfurecida", "explodir de raiva", "não aguento mais isso"], "explicacoes": ["A raiva chegou a um ponto de intensidade máxima, difícil de conter ou disfarçar.", "Algo ultrapassou completamente o limite do que você considera aceitável."], "atitudes": ["Afaste-se fisicamente da situação antes de agir ou falar qualquer coisa.", "Encontre uma forma segura de liberar essa energia, como exercício físico intenso, antes de decidir algo."], "definicao": "A raiva chegou a um ponto de intensidade máxima, difícil de conter ou disfarçar."}, {"id": 23, "emocao": "Frustração", "emoji": "😤", "categoria": "raiva", "keywords": ["não consigo", "nao consigo", "travado", "travada", "saco cheio", "nada dá certo", "nada da certo"], "explicacoes": ["Você está se esforçando, mas o resultado não corresponde ao esperado, e isso gera uma sensação de bloqueio.", "Existe uma distância grande entre o que você quer e o que está conseguindo, e isso pesa."], "atitudes": ["Dê um passo para trás e divida o problema em partes menores. Uma de cada vez.", "Faça uma pausa curta antes de tentar de novo. Insistir cansado raramente ajuda."], "definicao": "Você está se esforçando, mas o resultado não corresponde ao esperado, e isso gera uma sensação de bloqueio."}, {"id": 24, "emocao": "Indignação", "emoji": "😾", "categoria": "raiva", "keywords": ["um absurdo", "não é justo", "nao e justo", "revoltante", "isso é errado"], "explicacoes": ["Você testemunhou ou viveu algo que fere fortemente seu senso de justiça e valores.", "A percepção de uma injustiça clara está gerando uma reação moral forte."], "atitudes": ["Se possível, canalize essa energia em uma ação concreta, mesmo pequena, em direção à mudança.", "Fale sobre o que viu ou viveu com pessoas que possam apoiar ou agir junto com você."], "definicao": "Você testemunhou ou viveu algo que fere fortemente seu senso de justiça e valores."}, {"id": 25, "emocao": "Ciúme", "emoji": "😠", "categoria": "raiva", "keywords": ["ciúme", "ciume", "com ciúmes", "com ciumes", "posse", "possessivo", "possessiva", "perder ele", "perder ela"], "explicacoes": ["Você teme perder algo ou alguém importante para você, e isso ativa um alerta de proteção.", "Existe um medo de ficar de fora ou de não ser mais prioridade para alguém."], "atitudes": ["Converse abertamente sobre o que sente, em vez de guardar ou agir por impulso.", "Identifique se o medo é sobre a situação real ou sobre inseguranças antigas suas."], "definicao": "Você teme perder algo ou alguém importante para você, e isso ativa um alerta de proteção."}, {"id": 26, "emocao": "Inveja", "emoji": "😒", "categoria": "raiva", "keywords": ["queria ter", "o outro", "injusto", "sorte dele", "sorte dela", "invejo"], "explicacoes": ["Você está comparando sua vida com a de outra pessoa e sentindo que está ficando para trás.", "Algo que o outro tem toca um desejo seu que ainda não foi realizado."], "atitudes": ["Anote uma coisa boa que só a sua trajetória te deu. Sua jornada não é a de ninguém.", "Transforme essa comparação em uma meta clara para você mesmo, no seu tempo."], "definicao": "Você está comparando sua vida com a de outra pessoa e sentindo que está ficando para trás."}, {"id": 27, "emocao": "Ressentimento", "emoji": "😑", "categoria": "raiva", "keywords": ["guardo mágoa", "guardo magoa", "nunca esqueci", "não perdoo", "nao perdoo"], "explicacoes": ["Uma mágoa antiga não foi resolvida, e continua pesando mesmo depois de tanto tempo.", "Algo que ficou sem reparação continua ocupando espaço na sua mente."], "atitudes": ["Considere o que significaria, para você, começar a soltar esse peso, mesmo aos poucos.", "Se possível, converse sobre o que ficou pendente, ou escreva o que sente para si mesmo."], "definicao": "Uma mágoa antiga não foi resolvida, e continua pesando mesmo depois de tanto tempo."}, {"id": 28, "emocao": "Impaciência", "emoji": "🙄", "categoria": "raiva", "keywords": ["demora", "logo", "pressa", "lerdo", "lerda", "impaciente"], "explicacoes": ["Você quer que algo aconteça mais rápido do que está acontecendo, e a espera está incomodando.", "O tempo entre o que você quer e o que ainda não chegou está pesando."], "atitudes": ["Use esse tempo de espera para respirar fundo ou focar em outra pequena tarefa.", "Lembre-se de algo que já valeu a pena esperar antes."], "definicao": "Você quer que algo aconteça mais rápido do que está acontecendo, e a espera está incomodando."}, {"id": 29, "emocao": "Irritação", "emoji": "😬", "categoria": "raiva", "keywords": ["me irrita", "irritante", "chateado", "chateada", "que saco", "irritado com"], "explicacoes": ["Um pequeno incômodo repetido está desgastando sua paciência aos poucos.", "Algo que talvez pareça pequeno de fora está pesando por ter se acumulado."], "atitudes": ["Identifique a fonte exata do incômodo e veja se é possível resolver ou se afastar dela.", "Respire fundo antes de reagir a algo pequeno; isso ajuda a manter a proporção certa."], "definicao": "Um pequeno incômodo repetido está desgastando sua paciência aos poucos."}, {"id": 30, "emocao": "Traição", "emoji": "🗡️", "categoria": "raiva", "keywords": ["me traiu", "traição", "traicao", "confiei e", "apunhalado", "apunhalada"], "explicacoes": ["Alguém em quem você confiava agiu de um jeito que quebrou essa confiança.", "A dor da traição mistura raiva, tristeza e a sensação de ter sido enganado."], "atitudes": ["Dê a si mesmo tempo antes de decidir como agir. Decisões na dor imediata costumam pesar depois.", "Busque apoio de pessoas de confiança para processar o que aconteceu."], "definicao": "Alguém em quem você confiava agiu de um jeito que quebrou essa confiança."}, {"id": 31, "emocao": "Vergonha", "emoji": "😳", "categoria": "vergonha", "keywords": ["mico", "humilhação", "humilhacao", "todos olhando", "esconder", "vergonha"], "explicacoes": ["Você teme ser julgado ou exposto por algo que fez ou que aconteceu com você.", "Existe um medo de que os outros vejam algo em você que você mesmo julga como falho."], "atitudes": ["Lembre-se que a maioria das pessoas está preocupada com a própria vida, não com a sua falha.", "Fale sobre isso com alguém de confiança. Vergonha perde força quando é dita em voz alta."], "definicao": "Você teme ser julgado ou exposto por algo que fez ou que aconteceu com você."}, {"id": 32, "emocao": "Culpa", "emoji": "😓", "categoria": "vergonha", "keywords": ["erro", "estraguei", "arrependimento", "minha culpa", "culpado", "culpada"], "explicacoes": ["Você acredita que fez algo errado e está julgando a si mesmo por isso.", "Uma parte sua está revivendo a situação, tentando entender onde poderia ter agido diferente."], "atitudes": ["Pergunte-se: eu agiria diferente sabendo o que sabia na hora? Se aprendeu algo, já é suficiente.", "Se possível, repare o que for possível reparar, e depois solte o resto."], "definicao": "Você acredita que fez algo errado e está julgando a si mesmo por isso."}, {"id": 33, "emocao": "Humilhação", "emoji": "😩", "categoria": "vergonha", "keywords": ["me humilharam", "humilhado", "humilhada", "me rebaixaram", "zombaram de mim"], "explicacoes": ["Você foi exposto ou tratado de forma que feriu sua dignidade diante de outras pessoas.", "Alguém, de propósito ou não, fez você se sentir menor do que realmente é."], "atitudes": ["Lembre-se: o comportamento de quem humilha fala sobre quem faz isso, não sobre seu valor real.", "Busque apoio de pessoas que te tratam com respeito para reequilibrar essa sensação."], "definicao": "Você foi exposto ou tratado de forma que feriu sua dignidade diante de outras pessoas."}, {"id": 34, "emocao": "Arrependimento", "emoji": "😔", "categoria": "vergonha", "keywords": ["me arrependo", "não devia ter", "nao devia ter", "se eu pudesse voltar"], "explicacoes": ["Você olha para uma decisão passada e gostaria de ter escolhido diferente.", "Uma escolha anterior está pesando à luz do que você sabe ou sente agora."], "atitudes": ["Extraia um aprendizado concreto dessa experiência, algo que você levará para a próxima decisão.", "Se possível e fizer sentido, repare a situação. Se não for possível, pratique se perdoar."], "definicao": "Você olha para uma decisão passada e gostaria de ter escolhido diferente."}, {"id": 35, "emocao": "Autocrítica", "emoji": "🪞", "categoria": "vergonha", "keywords": ["sou péssimo", "sou pessimo", "sou péssima", "nunca faço nada certo", "me odeio"], "explicacoes": ["Uma voz interna dura está avaliando você com um padrão quase impossível de alcançar.", "Você está sendo mais severo consigo mesmo do que seria com qualquer outra pessoa."], "atitudes": ["Troque a frase que disse a si mesmo por uma que você diria a um amigo na mesma situação.", "Anote 3 coisas que você fez bem hoje, por menores que sejam."], "definicao": "Uma voz interna dura está avaliando você com um padrão quase impossível de alcançar."}, {"id": 36, "emocao": "Acanhamento", "emoji": "🫢", "categoria": "vergonha", "keywords": ["fico sem graça", "não sei o que falar", "nao sei o que falar", "travo na frente"], "explicacoes": ["Situações sociais estão gerando um receio de ser julgado ou de não saber como agir.", "Existe uma preocupação grande sobre a impressão que você está causando."], "atitudes": ["Prepare com antecedência um ou dois assuntos, isso reduz a ansiedade na hora.", "Lembre-se que praticamente todo mundo já se sentiu assim em algum momento."], "definicao": "Situações sociais estão gerando um receio de ser julgado ou de não saber como agir."}, {"id": 37, "emocao": "Insuficiência", "emoji": "😥", "categoria": "vergonha", "keywords": ["não sou bom o suficiente", "nao sou bom o suficiente", "não dou conta", "nao dou conta"], "explicacoes": ["Você sente que não está à altura de uma expectativa, sua ou de outra pessoa.", "A sensação de nunca ser 'o bastante' está pesando sobre suas ações e escolhas."], "atitudes": ["Separe o que é expectativa realista do que é perfeccionismo. Ambos merecem tratamento diferente.", "Celebre o progresso, não apenas o resultado final perfeito."], "definicao": "Você sente que não está à altura de uma expectativa, sua ou de outra pessoa."}, {"id": 38, "emocao": "Autocompaixão ferida", "emoji": "💗", "categoria": "vergonha", "keywords": ["não mereço", "nao mereco", "não sou digno", "nao sou digno", "não sou digna"], "explicacoes": ["Uma parte sua está duvidando do próprio direito de ser cuidado, amado ou respeitado.", "Experiências passadas podem ter ensinado, erradamente, que seu valor é condicional."], "atitudes": ["Pratique tratar a si mesmo com o mesmo cuidado que ofereceria a alguém que ama.", "Lembre-se: seu valor não depende de performance, aparência ou aprovação alheia."], "definicao": "Uma parte sua está duvidando do próprio direito de ser cuidado, amado ou respeitado."}, {"id": 39, "emocao": "Empatia", "emoji": "🫂", "categoria": "conexao", "keywords": ["sinto o que ele sente", "me coloco no lugar", "entendo a dor dele", "entendo a dor dela"], "explicacoes": ["Você está se conectando profundamente com o sentimento de outra pessoa, quase sentindo junto.", "Sua capacidade de compreender o outro está ativa e presente agora."], "atitudes": ["Ofereça presença e escuta, sem tentar resolver o problema do outro imediatamente.", "Cuide também de si mesmo; sentir junto com o outro também cansa."], "definicao": "Você está se conectando profundamente com o sentimento de outra pessoa, quase sentindo junto."}, {"id": 40, "emocao": "Compaixão", "emoji": "🤲", "categoria": "conexao", "keywords": ["tenho pena", "quero ajudar", "dói ver", "doi ver", "sinto pelo outro"], "explicacoes": ["Você percebeu o sofrimento de alguém e sentiu o desejo genuíno de aliviar essa dor.", "Um cuidado sincero pelo bem-estar de outra pessoa está guiando o que você sente."], "atitudes": ["Ofereça ajuda concreta, mesmo pequena, em vez de apenas sentir pena à distância.", "Lembre-se que compaixão também inclui você mesmo, não só o outro."], "definicao": "Você percebeu o sofrimento de alguém e sentiu o desejo genuíno de aliviar essa dor."}, {"id": 41, "emocao": "Gratidão", "emoji": "🙏", "categoria": "conexao", "keywords": ["obrigado", "obrigada", "sorte", "ajudou", "coração cheio", "coracao cheio"], "explicacoes": ["Você reconhece algo bom que recebeu, seja de uma pessoa, de uma situação ou da vida.", "Algo ou alguém tocou você de um jeito que mereceu reconhecimento."], "atitudes": ["Expresse esse sentimento para quem contribuiu com ele. Gratidão compartilhada se multiplica.", "Anote esse momento, ele pode ajudar em dias mais difíceis no futuro."], "definicao": "Você reconhece algo bom que recebeu, seja de uma pessoa, de uma situação ou da vida."}, {"id": 42, "emocao": "Ternura", "emoji": "🥰", "categoria": "conexao", "keywords": ["que fofo", "meu coração derrete", "tão fofinho", "tao fofinho", "amoroso"], "explicacoes": ["Algo pequeno e delicado despertou um carinho genuíno e suave em você.", "Uma sensação de cuidado afetuoso está sendo despertada por alguém ou algo próximo."], "atitudes": ["Deixe-se sentir esse carinho por inteiro, sem pressa de nomear ou justificar.", "Expresse esse afeto para quem o despertou, se for apropriado."], "definicao": "Algo pequeno e delicado despertou um carinho genuíno e suave em você."}, {"id": 43, "emocao": "Paixão", "emoji": "❤️‍🔥", "categoria": "conexao", "keywords": ["apaixonado", "apaixonada", "não paro de pensar nele", "nao paro de pensar nele", "borboletas"], "explicacoes": ["Uma atração intensa e envolvente por alguém ou algo está tomando boa parte da sua atenção.", "Seu corpo e mente estão em alta energia diante de algo que desperta forte interesse."], "atitudes": ["Aproveite essa intensidade, mas mantenha os pés no chão nas decisões importantes.", "Converse com quem desperta isso em você, se for uma pessoa, com honestidade e leveza."], "definicao": "Uma atração intensa e envolvente por alguém ou algo está tomando boa parte da sua atenção."}, {"id": 44, "emocao": "Confiança", "emoji": "🤝", "categoria": "conexao", "keywords": ["confio", "posso contar", "seguro com", "sei que posso"], "explicacoes": ["Você sente segurança na relação com alguém ou em uma situação específica.", "Uma base sólida de previsibilidade e respeito está presente aqui."], "atitudes": ["Reconheça e valorize essa relação ou situação segura, ela é rara e importante.", "Continue nutrindo essa confiança com honestidade e consistência."], "definicao": "Você sente segurança na relação com alguém ou em uma situação específica."}, {"id": 45, "emocao": "Solidariedade", "emoji": "🙌", "categoria": "conexao", "keywords": ["estamos juntos", "vamos juntos", "apoio você", "conte comigo"], "explicacoes": ["Você sente um forte senso de união com outras pessoas diante de uma causa ou dificuldade comum.", "A conexão com o coletivo está trazendo força e propósito para você."], "atitudes": ["Participe ativamente dessa rede de apoio, oferecendo e recebendo ajuda.", "Reconheça o valor de não estar enfrentando as coisas sozinho."], "definicao": "Você sente um forte senso de união com outras pessoas diante de uma causa ou dificuldade comum."}, {"id": 46, "emocao": "Lealdade", "emoji": "🫡", "categoria": "conexao", "keywords": ["nunca vou abandonar", "fico do seu lado", "leal", "fiel"], "explicacoes": ["Você sente um compromisso profundo e duradouro com alguém ou algo importante.", "Esse sentimento reflete valores fortes de compromisso e permanência."], "atitudes": ["Honre esse compromisso, mas cuide para que ele também seja recíproco e saudável.", "Reconheça o valor de quem também é leal a você."], "definicao": "Você sente um compromisso profundo e duradouro com alguém ou algo importante."}, {"id": 47, "emocao": "Perdão", "emoji": "🕊️", "categoria": "conexao", "keywords": ["perdoei", "já deixei isso pra trás", "ja deixei isso pra tras", "não guardo mais rancor"], "explicacoes": ["Você conseguiu, ou está conseguindo, soltar o peso de uma mágoa antiga.", "Um processo de cura está permitindo que algo doloroso deixe de pesar tanto."], "atitudes": ["Celebre esse processo, ele é um dos mais difíceis e libertadores que existem.", "Lembre-se que perdoar não significa esquecer nem aceitar tudo de volta."], "definicao": "Você conseguiu, ou está conseguindo, soltar o peso de uma mágoa antiga."}, {"id": 48, "emocao": "Devoção", "emoji": "🩷", "categoria": "conexao", "keywords": ["dedicado a", "entrego meu tempo", "faço de coração", "com toda dedicação"], "explicacoes": ["Você está entregando tempo, energia e cuidado genuíno a algo ou alguém que valoriza muito.", "Um compromisso profundo está guiando suas ações com propósito claro."], "atitudes": ["Verifique se essa entrega está equilibrada com o cuidado de si mesmo também.", "Celebre o significado que essa dedicação traz para sua vida."], "definicao": "Você está entregando tempo, energia e cuidado genuíno a algo ou alguém que valoriza muito."}, {"id": 49, "emocao": "Reconciliação", "emoji": "🤗", "categoria": "conexao", "keywords": ["fizemos as pazes", "voltamos a nos falar", "resolvemos", "nos entendemos de novo"], "explicacoes": ["Uma relação que estava rompida ou tensa encontrou um caminho de volta ao entendimento.", "Algo que doía entre vocês está sendo reparado, mesmo que aos poucos."], "atitudes": ["Valorize esse recomeço com paciência, reconstruir confiança leva tempo.", "Celebre o esforço mútuo de voltar a se entender."], "definicao": "Uma relação que estava rompida ou tensa encontrou um caminho de volta ao entendimento."}, {"id": 50, "emocao": "Aceitação", "emoji": "🌱", "categoria": "conexao", "keywords": ["aceito", "tudo bem assim", "já fiz as pazes com isso", "ja fiz as pazes com isso"], "explicacoes": ["Você chegou a um lugar de paz com algo que antes causava resistência ou sofrimento.", "Uma situação que era difícil de engolir está encontrando espaço para ser vivida com mais leveza."], "atitudes": ["Reconheça o caminho que percorreu até chegar a essa aceitação, ele não foi fácil.", "Continue cultivando esse espaço de paz, sem pressa de voltar a lutar contra o que é."], "definicao": "Você chegou a um lugar de paz com algo que antes causava resistência ou sofrimento."}, {"id": 51, "emocao": "Alegria", "emoji": "😄", "categoria": "alegria", "keywords": ["feliz", "sorrir", "ótimo", "otimo", "maravilhoso", "alegre"], "explicacoes": ["Algo bom aconteceu ou você está vivendo um momento que combina com seus valores e desejos.", "Você está em sintonia com algo que faz sentido e traz leveza pra sua vida agora."], "atitudes": ["Aproveite esse momento por completo, sem pressa. Guarde essa sensação na memória.", "Compartilhe essa alegria com alguém, ela costuma crescer quando dividida."], "definicao": "Algo bom aconteceu ou você está vivendo um momento que combina com seus valores e desejos."}, {"id": 52, "emocao": "Euforia", "emoji": "🥳", "categoria": "alegria", "keywords": ["eufórico", "euforico", "eufórica", "muito animado", "muito animada", "no auge"], "explicacoes": ["Uma onda intensa de entusiasmo e energia positiva está tomando conta de você agora.", "Algo muito bom está gerando uma sensação de pico emocional forte."], "atitudes": ["Aproveite esse momento, mas evite decisões grandes até essa intensidade se equilibrar um pouco.", "Celebre com quem também torce por você."], "definicao": "Uma onda intensa de entusiasmo e energia positiva está tomando conta de você agora."}, {"id": 53, "emocao": "Contentamento", "emoji": "🙂", "categoria": "alegria", "keywords": ["satisfeito", "satisfeita", "tudo bem por aqui", "tranquilo e feliz", "tranquila e feliz"], "explicacoes": ["Você está em um estado de bem-estar tranquilo, sem grandes picos, mas confortável.", "As coisas parecem estar em ordem suficiente para você se sentir bem hoje."], "atitudes": ["Aproveite esse equilíbrio simples, ele também merece ser celebrado.", "Note o que contribuiu para esse contentamento e cultive mais disso."], "definicao": "Você está em um estado de bem-estar tranquilo, sem grandes picos, mas confortável."}, {"id": 54, "emocao": "Esperança", "emoji": "🥹", "categoria": "alegria", "keywords": ["vai melhorar", "futuro bom", "luz", "tenho esperança", "esperançoso", "esperancoso"], "explicacoes": ["Você está enxergando possibilidade de algo melhor, mesmo em meio às dificuldades atuais.", "Uma pequena luz apareceu em meio a um momento difícil, e isso já é valioso."], "atitudes": ["Dê um pequeno passo hoje em direção a esse futuro que você imagina.", "Anote o motivo dessa esperança, para lembrar dele nos dias mais difíceis."], "definicao": "Você está enxergando possibilidade de algo melhor, mesmo em meio às dificuldades atuais."}, {"id": 55, "emocao": "Alívio", "emoji": "😮‍💨", "categoria": "alegria", "keywords": ["passou", "acabou", "ufa", "peso saiu", "aliviado", "aliviada"], "explicacoes": ["Uma tensão ou preocupação chegou ao fim, e seu corpo finalmente pode relaxar.", "O peso que você carregava se soltou, mesmo que por agora."], "atitudes": ["Aproveite esse respiro. Você merece descansar depois de tanta tensão.", "Note como o corpo se sente agora, guarde essa sensação de leveza."], "definicao": "Uma tensão ou preocupação chegou ao fim, e seu corpo finalmente pode relaxar."}, {"id": 56, "emocao": "Empolgação", "emoji": "🤩", "categoria": "alegria", "keywords": ["ansioso pra", "ansiosa pra", "não vejo a hora", "nao vejo a hora", "hype", "empolgado", "empolgada"], "explicacoes": ["Algo que você espera está próximo de acontecer, e sua energia está toda voltada para isso.", "A expectativa por algo bom está deixando os dias mais vibrantes."], "atitudes": ["Canalize essa energia em preparação ou planejamento para aproveitar ainda mais o momento.", "Compartilhe essa expectativa com alguém, ela fica ainda mais gostosa dividida."], "definicao": "Algo que você espera está próximo de acontecer, e sua energia está toda voltada para isso."}, {"id": 57, "emocao": "Orgulho", "emoji": "😌", "categoria": "alegria", "keywords": ["eu consegui", "vitória", "vitoria", "superação", "superacao", "fiz bem", "orgulhoso", "orgulhosa"], "explicacoes": ["Você reconhece seu próprio esforço e conquista, e isso é motivo genuíno de celebração.", "Você chegou aonde queria, mesmo com todas as dificuldades pelo caminho."], "atitudes": ["Comemore, mesmo que discretamente. Reconhecer suas vitórias fortalece sua confiança.", "Compartilhe essa conquista com alguém que torce por você."], "definicao": "Você reconhece seu próprio esforço e conquista, e isso é motivo genuíno de celebração."}, {"id": 58, "emocao": "Realização", "emoji": "🏆", "categoria": "alegria", "keywords": ["realizado", "realizada", "conquistei", "atingi meu objetivo", "cheguei lá"], "explicacoes": ["Você atingiu algo que era significativo para você, e isso traz uma sensação profunda de plenitude.", "Um objetivo importante foi alcançado, e o esforço investido finalmente deu frutos."], "atitudes": ["Celebre esse momento antes de já pensar no próximo objetivo.", "Reconheça todo o caminho percorrido, não apenas o resultado final."], "definicao": "Você atingiu algo que era significativo para você, e isso traz uma sensação profunda de plenitude."}, {"id": 59, "emocao": "Entusiasmo", "emoji": "🎉", "categoria": "alegria", "keywords": ["animado", "animada", "cheio de energia", "cheia de energia", "empolgado com isso"], "explicacoes": ["Uma nova ideia, projeto ou possibilidade está gerando energia e vontade de agir.", "Você está genuinamente interessado e motivado por algo no momento."], "atitudes": ["Aproveite essa energia para começar algo que estava adiando.", "Compartilhe esse entusiasmo, ele costuma ser contagiante para quem está ao redor."], "definicao": "Uma nova ideia, projeto ou possibilidade está gerando energia e vontade de agir."}, {"id": 60, "emocao": "Admiração", "emoji": "🫨", "categoria": "alegria", "keywords": ["admiro", "impressionante", "que incrível", "que incrivel", "inspirador"], "explicacoes": ["Algo ou alguém despertou um respeito genuíno e uma vontade de aprender ou se inspirar.", "Você reconheceu qualidades valiosas em outra pessoa, obra ou situação."], "atitudes": ["Deixe essa admiração te inspirar a cultivar algo parecido em você mesmo.", "Se possível, diga a essa pessoa o que você admira nela."], "definicao": "Algo ou alguém despertou um respeito genuíno e uma vontade de aprender ou se inspirar."}, {"id": 61, "emocao": "Fascinação", "emoji": "🌠", "categoria": "alegria", "keywords": ["fascinado", "fascinada", "não consigo parar de pensar nisso", "curioso demais"], "explicacoes": ["Algo capturou totalmente sua atenção e curiosidade, de um jeito quase hipnotizante.", "Sua mente está genuinamente envolvida e querendo explorar mais sobre esse assunto."], "atitudes": ["Aproveite essa curiosidade para aprender mais sobre o que despertou seu interesse.", "Anote as perguntas que surgirem, elas podem levar a descobertas interessantes."], "definicao": "Algo capturou totalmente sua atenção e curiosidade, de um jeito quase hipnotizante."}, {"id": 62, "emocao": "Serenidade", "emoji": "🧘", "categoria": "alegria", "keywords": ["em paz", "tranquilo", "tranquila", "sereno", "serena", "calma interior"], "explicacoes": ["Você está em um estado de paz interior, sem urgências ou tensões dominando o momento.", "As coisas parecem estar em equilíbrio dentro de você agora."], "atitudes": ["Aproveite esse estado, talvez em silêncio ou em contato com a natureza.", "Guarde na memória o que te trouxe até essa serenidade, para buscar de novo quando precisar."], "definicao": "Você está em um estado de paz interior, sem urgências ou tensões dominando o momento."}, {"id": 63, "emocao": "Confusão", "emoji": "🤷", "categoria": "existencial", "keywords": ["não sei", "nao sei", "perdido", "perdida", "dúvidas", "duvidas", "embaralhado"], "explicacoes": ["Há informações demais ou conflitantes na sua cabeça, e ainda não ficou claro qual caminho seguir.", "Sua mente está tentando organizar peças que ainda não se encaixam."], "atitudes": ["Escreva no papel os prós e contras. Colocar para fora ajuda a mente a organizar.", "Converse com alguém de fora da situação, às vezes uma outra perspectiva clareia tudo."], "definicao": "Há informações demais ou conflitantes na sua cabeça, e ainda não ficou claro qual caminho seguir."}, {"id": 64, "emocao": "Apatia", "emoji": "😶", "categoria": "existencial", "keywords": ["tanto faz", "sem vontade", "cinza", "não sinto nada", "nao sinto nada"], "explicacoes": ["Você pode estar em modo de proteção emocional, desligando temporariamente do que sente para não sofrer.", "Parece que as coisas perderam a cor, e isso costuma ser um sinal de que algo precisa de atenção."], "atitudes": ["Não se force a sentir algo. Apenas faça uma pequena ação de cuidado, como beber água ou tomar sol.", "Se essa sensação persistir por muitos dias, considere conversar com um profissional de confiança."], "definicao": "Você pode estar em modo de proteção emocional, desligando temporariamente do que sente para não sofrer."}, {"id": 65, "emocao": "Tédio", "emoji": "🥱", "categoria": "existencial", "keywords": ["nada pra fazer", "entediado", "entediada", "chato", "chata", "monótono", "monotono"], "explicacoes": ["Sua mente está pedindo estímulo, novidade ou propósito, e a rotina atual não está entregando isso.", "Falta algo que engaje sua atenção de verdade no momento presente."], "atitudes": ["Experimente algo pequeno e diferente hoje, mesmo que simples, como um novo caminho ou música.", "Reserve 10 minutos para algo que você sempre quis experimentar."], "definicao": "Sua mente está pedindo estímulo, novidade ou propósito, e a rotina atual não está entregando isso."}, {"id": 66, "emocao": "Ambivalência", "emoji": "⚖️", "categoria": "existencial", "keywords": ["não sei se quero", "nao sei se quero", "ao mesmo tempo", "parte de mim quer"], "explicacoes": ["Duas vontades ou sentimentos opostos estão presentes ao mesmo tempo, dificultando uma decisão clara.", "Você percebe motivos válidos para dois caminhos diferentes, e isso gera tensão interna."], "atitudes": ["Escreva os prós e contras de cada lado, sem pressa de decidir imediatamente.", "Pergunte-se qual escolha você respeitaria mais daqui a um ano."], "definicao": "Duas vontades ou sentimentos opostos estão presentes ao mesmo tempo, dificultando uma decisão clara."}, {"id": 67, "emocao": "Expectativa", "emoji": "⏳", "categoria": "existencial", "keywords": ["esperando", "aguardando", "quando vai", "ainda não chegou", "ainda nao chegou"], "explicacoes": ["Você está aguardando algo importante, e essa espera ocupa boa parte da sua mente.", "Um resultado ou acontecimento futuro está gerando uma mistura de ansiedade e esperança."], "atitudes": ["Ocupe esse tempo de espera com algo que também te faça bem, sem só focar no que ainda não chegou.", "Lembre-se de respirar; o tempo de espera também é parte do processo."], "definicao": "Você está aguardando algo importante, e essa espera ocupa boa parte da sua mente."}, {"id": 68, "emocao": "Perplexidade", "emoji": "😵", "categoria": "existencial", "keywords": ["não entendo como isso aconteceu", "nao entendo como isso aconteceu", "inacreditável", "inacreditavel"], "explicacoes": ["Algo fugiu tanto do esperado que sua mente ainda está tentando processar e entender.", "A situação é tão fora do comum que ainda não fez sentido completo para você."], "atitudes": ["Dê tempo para a informação ser absorvida antes de tirar conclusões apressadas.", "Converse com alguém sobre o que aconteceu, verbalizar ajuda a organizar o entendimento."], "definicao": "Algo fugiu tanto do esperado que sua mente ainda está tentando processar e entender."}, {"id": 69, "emocao": "Surpresa", "emoji": "😲", "categoria": "existencial", "keywords": ["do nada", "não esperava", "nao esperava", "chocado", "chocada", "uau"], "explicacoes": ["Algo inesperado aconteceu e sua mente ainda está processando essa novidade.", "O que aconteceu fugiu completamente do que você previa, e isso pede um tempo de ajuste."], "atitudes": ["Dê um tempo para absorver antes de reagir ou tomar decisões importantes.", "Respire e observe: nem toda surpresa precisa de uma resposta imediata."], "definicao": "Algo inesperado aconteceu e sua mente ainda está processando essa novidade."}, {"id": 70, "emocao": "Nostalgia", "emoji": "🎞️", "categoria": "existencial", "keywords": ["antigamente", "infância", "infancia", "lembrar", "como era bom"], "explicacoes": ["Uma lembrança do passado trouxe à tona sentimentos ligados a pessoas, lugares ou momentos importantes.", "Algo do presente reativou uma memória afetiva forte de outro tempo."], "atitudes": ["Permita-se sentir essa lembrança com carinho, e se quiser, reviva algo dela hoje.", "Compartilhe essa lembrança com alguém que também estava lá, se possível."], "definicao": "Uma lembrança do passado trouxe à tona sentimentos ligados a pessoas, lugares ou momentos importantes."}, {"id": 71, "emocao": "Curiosidade", "emoji": "🧐", "categoria": "existencial", "keywords": ["quero entender", "como funciona", "fiquei curioso", "fiquei curiosa", "por quê", "por que"], "explicacoes": ["Sua mente está genuinamente interessada em explorar e descobrir mais sobre algo.", "Uma pergunta ou mistério despertou vontade de investigar mais a fundo."], "atitudes": ["Siga essa curiosidade, pesquise, pergunte, explore. Ela costuma levar a bons lugares.", "Anote as perguntas que surgirem, para não perdê-las no meio do caminho."], "definicao": "Sua mente está genuinamente interessada em explorar e descobrir mais sobre algo."}, {"id": 72, "emocao": "Antecipação", "emoji": "🤔", "categoria": "existencial", "keywords": ["já imaginando", "ja imaginando", "pensando no que vai vir", "planejando"], "explicacoes": ["Sua mente está se preparando mentalmente para algo que ainda vai acontecer.", "Você está projetando cenários futuros, o que pode trazer tanto ansiedade quanto entusiasmo."], "atitudes": ["Separe o que é planejamento útil do que é preocupação excessiva antecipada.", "Volte ao presente sempre que perceber que está vivendo só no futuro imaginado."], "definicao": "Sua mente está se preparando mentalmente para algo que ainda vai acontecer."}, {"id": 73, "emocao": "Insatisfação", "emoji": "😣", "categoria": "existencial", "keywords": ["não é isso que eu queria", "nao e isso que eu queria", "falta alguma coisa", "não me sinto bem com"], "explicacoes": ["Algo na sua vida ou situação atual não está alinhado com o que você realmente deseja.", "Existe uma sensação de que as coisas poderiam, ou deveriam, ser diferentes."], "atitudes": ["Identifique especificamente o que está causando essa insatisfação, isso ajuda a agir sobre ela.", "Pergunte-se: o que é possível mudar agora, mesmo que pequeno?"], "definicao": "Algo na sua vida ou situação atual não está alinhado com o que você realmente deseja."}, {"id": 74, "emocao": "Frieza emocional", "emoji": "🥶", "categoria": "existencial", "keywords": ["não sinto mais nada", "nao sinto mais nada", "desliguei", "emocionalmente distante"], "explicacoes": ["Você pode estar se protegendo temporariamente, distanciando-se das próprias emoções.", "Uma sobrecarga emocional anterior pode ter levado a essa espécie de desligamento."], "atitudes": ["Vá com calma, reconectar com as emoções tem seu próprio tempo, não force.", "Se esse estado persistir, conversar com um profissional pode ajudar a entender a causa."], "definicao": "Você pode estar se protegendo temporariamente, distanciando-se das próprias emoções."}, {"id": 75, "emocao": "Desconforto", "emoji": "😕", "categoria": "existencial", "keywords": ["incomodado", "incomodada", "não me sinto bem aqui", "nao me sinto bem aqui", "estranho"], "explicacoes": ["Algo na situação atual não está em sintonia com você, mesmo que não saiba explicar exatamente o quê.", "Seu corpo ou intuição está sinalizando que algo precisa de atenção."], "atitudes": ["Preste atenção a esse sinal, ele geralmente aponta para algo que merece ser observado.", "Se for seguro, afaste-se da situação até identificar melhor a origem do desconforto."], "definicao": "Algo na situação atual não está em sintonia com você, mesmo que não saiba explicar exatamente o quê."}, {"id": 76, "emocao": "Alienação", "emoji": "🚷", "categoria": "existencial", "keywords": ["não pertenço", "nao pertenco", "me sinto de fora", "estranho ao grupo", "estranha ao grupo"], "explicacoes": ["Você sente que não se encaixa em um grupo, ambiente ou contexto ao seu redor.", "Existe uma distância entre você e as pessoas ou situações à sua volta."], "atitudes": ["Busque espaços onde você se sinta genuinamente aceito, mesmo que fora do grupo atual.", "Lembre-se que não pertencer a um lugar específico não significa não pertencer a lugar nenhum."], "definicao": "Você sente que não se encaixa em um grupo, ambiente ou contexto ao seu redor."}, {"id": 77, "emocao": "Confusão emocional", "emoji": "🌀", "categoria": "existencial", "keywords": ["não sei o que sinto", "nao sei o que sinto", "muitas emoções ao mesmo tempo", "muitas emocoes ao mesmo tempo"], "explicacoes": ["Várias emoções diferentes estão presentes ao mesmo tempo, dificultando identificar uma única com clareza.", "Seu mundo interno está mais complexo do que uma única palavra consegue descrever agora."], "atitudes": ["Escreva livremente por alguns minutos, sem se preocupar em organizar, só para colocar para fora.", "Está tudo bem não conseguir nomear exatamente o que sente agora. Isso também passa."], "definicao": "Várias emoções diferentes estão presentes ao mesmo tempo, dificultando identificar uma única com clareza."}, {"id": 78, "emocao": "Plenitude", "emoji": "🌟", "categoria": "existencial", "keywords": ["me sinto completo", "me sinto completa", "tudo em seu lugar", "gratidão profunda", "gratidao profunda"], "explicacoes": ["Você está vivendo um momento raro de sentir que as coisas fazem sentido como um todo.", "Uma sensação profunda de completude está presente, unindo corpo, mente e propósito."], "atitudes": ["Absorva esse momento por completo, sem pressa de nomeá-lo ou justificá-lo.", "Guarde essa sensação como referência para os dias mais difíceis."], "definicao": "Você está vivendo um momento raro de sentir que as coisas fazem sentido como um todo."}, {"id": 79, "emocao": "Desejo", "emoji": "😏", "categoria": "existencial", "keywords": ["quero muito", "desejo", "não paro de pensar em", "nao paro de pensar em"], "explicacoes": ["Algo desperta em você uma vontade forte e clara, seja de ter, viver ou experimentar.", "Uma parte sua está genuinamente atraída por uma possibilidade futura."], "atitudes": ["Reflita se essa vontade combina com seus valores e planos de vida antes de agir por impulso.", "Transforme esse desejo em um passo concreto, mesmo pequeno, em direção a ele."], "definicao": "Algo desperta em você uma vontade forte e clara, seja de ter, viver ou experimentar."}, {"id": 80, "emocao": "Determinação", "emoji": "💪", "categoria": "existencial", "keywords": ["vou conseguir", "não vou desistir", "nao vou desistir", "com toda força", "com toda forca"], "explicacoes": ["Você está mobilizando toda a sua energia e foco em direção a um objetivo importante.", "Uma vontade firme de seguir em frente está presente, mesmo diante de obstáculos."], "atitudes": ["Use essa energia para dar o próximo passo concreto em direção ao seu objetivo.", "Lembre-se de descansar também; determinação sustentável precisa de pausas."], "definicao": "Você está mobilizando toda a sua energia e foco em direção a um objetivo importante."}, {"id": 81, "emocao": "Coragem", "emoji": "🦁", "categoria": "existencial", "keywords": ["vou enfrentar", "mesmo com medo", "corajoso", "corajosa", "vou tentar mesmo assim"], "explicacoes": ["Você está escolhendo agir apesar do medo presente, e isso é a essência da coragem.", "Uma decisão importante está sendo tomada mesmo diante da incerteza."], "atitudes": ["Reconheça que sentir medo e agir mesmo assim é, sim, coragem genuína.", "Dê o primeiro passo, mesmo pequeno, o resto costuma ficar mais claro depois."], "definicao": "Você está escolhendo agir apesar do medo presente, e isso é a essência da coragem."}, {"id": 82, "emocao": "Autoconfiança", "emoji": "🦋", "categoria": "existencial", "keywords": ["confio em mim", "sei que consigo", "acredito em mim mesmo", "acredito em mim mesma"], "explicacoes": ["Você está reconhecendo sua própria capacidade de lidar com o que está por vir.", "Uma base sólida de confiança em si mesmo está sustentando suas decisões agora."], "atitudes": ["Aproveite esse momento para tomar decisões importantes que estava adiando.", "Lembre-se dessa sensação nos momentos futuros de dúvida."], "definicao": "Você está reconhecendo sua própria capacidade de lidar com o que está por vir."}, {"id": 83, "emocao": "Autocompaixão", "emoji": "🫶", "categoria": "existencial", "keywords": ["sou gentil comigo", "me perdoo", "estou fazendo o meu melhor", "me trato bem"], "explicacoes": ["Você está conseguindo tratar a si mesmo com o mesmo cuidado que ofereceria a alguém querido.", "Uma forma mais gentil de lidar com seus próprios erros e limites está presente."], "atitudes": ["Continue praticando essa gentileza consigo mesmo, especialmente nos dias difíceis.", "Reconheça esse cuidado como uma habilidade que se fortalece com a prática."], "definicao": "Você está conseguindo tratar a si mesmo com o mesmo cuidado que ofereceria a alguém querido."}, {"id": 84, "emocao": "Otimismo", "emoji": "🌈", "categoria": "existencial", "keywords": ["vai dar certo", "confio que vai melhorar", "sou otimista", "tudo vai se ajeitar"], "explicacoes": ["Você está enxergando o lado possível e positivo de uma situação, mesmo incerta.", "Uma perspectiva confiante sobre o futuro está guiando seus pensamentos agora."], "atitudes": ["Use esse otimismo como combustível para agir, não apenas para esperar passivamente.", "Equilibre otimismo com planejamento realista, os dois juntos são mais fortes."], "definicao": "Você está enxergando o lado possível e positivo de uma situação, mesmo incerta."}, {"id": 85, "emocao": "Pessimismo", "emoji": "☁️", "categoria": "existencial", "keywords": ["nada vai dar certo", "sempre dá errado", "sempre da errado", "não adianta tentar", "nao adianta tentar"], "explicacoes": ["Você está enxergando principalmente os riscos e possibilidades negativas de uma situação.", "Experiências anteriores podem estar influenciando a forma como você vê o que ainda vai acontecer."], "atitudes": ["Busque um exemplo real, por menor que seja, de algo que deu certo antes, para equilibrar a visão.", "Permita-se considerar, mesmo que com cautela, a possibilidade de um resultado melhor."], "definicao": "Você está enxergando principalmente os riscos e possibilidades negativas de uma situação."}, {"id": 86, "emocao": "Encantamento", "emoji": "✨", "categoria": "existencial", "keywords": ["encantado", "encantada", "magico", "mágico", "que lindo isso"], "explicacoes": ["Algo despertou uma sensação de beleza e leveza que tocou você de forma especial.", "Um momento simples ganhou um brilho particular aos seus olhos."], "atitudes": ["Permaneça um pouco mais nesse momento antes de seguir para a próxima tarefa.", "Registre esse momento de alguma forma, uma foto, uma frase, para lembrar dele depois."], "definicao": "Algo despertou uma sensação de beleza e leveza que tocou você de forma especial."}, {"id": 87, "emocao": "Nojo", "emoji": "🤢", "categoria": "existencial", "keywords": ["nojo", "repulsa", "enjoo", "enojado", "enojada"], "explicacoes": ["Algo ativou uma reação forte de rejeição, física ou moral, no seu corpo ou mente.", "Seu sistema de alerta identificou algo como impróprio ou prejudicial."], "atitudes": ["Afaste-se, física ou mentalmente, da fonte desse desconforto sempre que possível.", "Confie nessa reação como um sinal de proteção, mesmo que pareça desproporcional à primeira vista."], "definicao": "Algo ativou uma reação forte de rejeição, física ou moral, no seu corpo ou mente."}, {"id": 88, "emocao": "Repulsa", "emoji": "🤮", "categoria": "existencial", "keywords": ["me repugna", "não suporto", "nao suporto", "enjoativo"], "explicacoes": ["Uma rejeição intensa surgiu diante de algo que contraria fortemente seus valores ou sentidos.", "O corpo e a mente estão reagindo com força contra algo percebido como errado ou nocivo."], "atitudes": ["Coloque distância entre você e a fonte dessa reação, sempre que for possível.", "Se a repulsa for sobre um comportamento de alguém, considere estabelecer um limite claro."], "definicao": "Uma rejeição intensa surgiu diante de algo que contraria fortemente seus valores ou sentidos."}, {"id": 89, "emocao": "Desespero", "emoji": "😫", "categoria": "existencial", "keywords": ["sem saída", "sem saida", "fim", "socorro", "não aguento", "nao aguento"], "explicacoes": ["Você sente que as opções acabaram e que a situação está fora do seu controle.", "Tudo parece urgente e sem saída ao mesmo tempo, e isso é exaustivo de carregar sozinho."], "atitudes": ["Busque apoio agora, seja de alguém próximo ou de um profissional. Você não precisa resolver isso sozinho.", "Foque apenas no próximo minuto, não no problema inteiro de uma vez."], "definicao": "Você sente que as opções acabaram e que a situação está fora do seu controle."}, {"id": 90, "emocao": "Sobrecarga/Burnout", "emoji": "😵‍💫", "categoria": "existencial", "keywords": ["cansaço", "cansaco", "exaustão", "exaustao", "sumir", "desistir", "muito peso"], "explicacoes": ["Você está carregando mais do que sua energia atual consegue sustentar, e o corpo está pedindo uma pausa real.", "Seu tanque está vazio, mas você continua tentando andar. Isso tem um limite."], "atitudes": ["Escolha uma única tarefa para hoje e adie o resto sem culpa. Descanso também é produtivo.", "Dê a si mesmo permissão para fazer menos hoje. Não é preguiça, é sobrevivência."], "definicao": "Você está carregando mais do que sua energia atual consegue sustentar, e o corpo está pedindo uma pausa real."}, {"id": 91, "emocao": "Mágoa", "emoji": "🤕", "categoria": "existencial", "keywords": ["ofensa", "machucado", "machucada", "palavras", "decepção", "decepcao", "mágoa", "magoa"], "explicacoes": ["Algo que alguém disse ou fez feriu você, especialmente se veio de uma pessoa importante.", "Uma expectativa que você tinha sobre alguém não foi correspondida."], "atitudes": ["Se possível, converse sobre o que sentiu. Guardar mágoa costuma pesar mais do que falar sobre ela.", "Dê a si mesmo tempo para processar antes de decidir como agir."], "definicao": "Algo que alguém disse ou fez feriu você, especialmente se veio de uma pessoa importante."}, {"id": 92, "emocao": "Plenitude amorosa", "emoji": "💞", "categoria": "existencial", "keywords": ["amado", "amada", "me sinto amado", "me sinto amada", "cercado de amor", "cercada de amor"], "explicacoes": ["Você está sentindo, de forma clara e presente, o quanto é amado e cuidado por alguém.", "Uma conexão afetiva profunda está trazendo uma sensação de segurança e calor."], "atitudes": ["Permita-se receber esse amor por completo, sem minimizar ou duvidar dele.", "Expresse de volta esse sentimento para quem te faz sentir assim."], "definicao": "Você está sentindo, de forma clara e presente, o quanto é amado e cuidado por alguém."}];
+
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const CATEGORY_LABELS = {
+  medo:"Medo", tristeza:"Tristeza", raiva:"Raiva", vergonha:"Vergonha",
+  conexao:"Conexão", alegria:"Alegria", existencial:"Complexas"
+};
+
+let sessionHistory = [];
+
+// ---------- Spotlight do mouse + sombra reativa à luz ----------
+document.addEventListener('mousemove', (e) => {
+  if(prefersReducedMotion) return;
+  document.documentElement.style.setProperty('--x', e.clientX + 'px');
+  document.documentElement.style.setProperty('--y', e.clientY + 'px');
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  const shiftX = ((e.clientX - cx) / cx) * -14;
+  const shiftY = ((e.clientY - cy) / cy) * -14;
+  document.documentElement.style.setProperty('--shadow-shift-x', (10 + shiftX * 0.3).toFixed(1) + 'px');
+  document.documentElement.style.setProperty('--shadow-shift-y', (10 + shiftY * 0.3).toFixed(1) + 'px');
+});
+
+document.addEventListener('touchmove', (e) => {
+  if(prefersReducedMotion) return;
+  if(e.touches && e.touches[0]){
+    document.documentElement.style.setProperty('--x', e.touches[0].clientX + 'px');
+    document.documentElement.style.setProperty('--y', e.touches[0].clientY + 'px');
+  }
+}, {passive:true});
+
+function escolherAleatorio(lista){
+  return lista[Math.floor(Math.random() * lista.length)];
+}
+
+// detecção por pontuação: soma quantas keywords de cada emoção aparecem no texto.
+// Em empate, prioriza a keyword mais longa/específica encontrada (menos genérica).
+function detectarEmocao(texto){
+  const t = texto.toLowerCase();
+  let candidatos = [];
+
+  for(const e of EMOCOES){
+    let score = 0;
+    let maiorKeywordLen = 0;
+    for(const kw of e.keywords){
+      const kwLower = kw.toLowerCase();
+      if(t.includes(kwLower)){
+        score++;
+        maiorKeywordLen = Math.max(maiorKeywordLen, kwLower.length);
+      }
+    }
+    if(score > 0){
+      candidatos.push({ e, score, maiorKeywordLen });
+    }
+  }
+
+  if(candidatos.length === 0){
+    return {
+      emocao:"Reflexivo", emoji:"☁️", categoria:"existencial",
+      explicacao:"Você está sentindo algo complexo, talvez uma mistura de emoções que ainda não têm um nome exato.",
+      atitude:"Tome um copo d'água e escreva mais sobre isso. Colocar em palavras ajuda a entender melhor.",
+      confianca:"baixa"
+    };
+  }
+
+  // ordena por score desc, depois por especificidade da keyword (mais longa = mais específica)
+  candidatos.sort((a,b) => b.score - a.score || b.maiorKeywordLen - a.maiorKeywordLen);
+  const vencedor = candidatos[0];
+
+  let confianca = "moderada";
+  if(vencedor.score >= 3) confianca = "forte";
+  else if(vencedor.score === 1 && vencedor.maiorKeywordLen < 6) confianca = "baixa";
+
+  return {
+    emocao: vencedor.e.emocao,
+    emoji: vencedor.e.emoji,
+    categoria: vencedor.e.categoria,
+    explicacao: escolherAleatorio(vencedor.e.explicacoes),
+    atitude: escolherAleatorio(vencedor.e.atitudes),
+    confianca
+  };
+}
+
+// ============ TABS ============
+const tabTraduzir = document.getElementById('tab-traduzir');
+const tabExplorar = document.getElementById('tab-explorar');
+const viewTraduzir = document.getElementById('view-traduzir');
+const viewExplorar = document.getElementById('view-explorar');
+
+function ativarTab(nome){
+  const isTraduzir = nome === 'traduzir';
+  tabTraduzir.classList.toggle('active', isTraduzir);
+  tabExplorar.classList.toggle('active', !isTraduzir);
+  tabTraduzir.setAttribute('aria-selected', isTraduzir);
+  tabExplorar.setAttribute('aria-selected', !isTraduzir);
+  viewTraduzir.classList.toggle('active', isTraduzir);
+  viewExplorar.classList.toggle('active', !isTraduzir);
+}
+
+tabTraduzir.addEventListener('click', () => ativarTab('traduzir'));
+tabExplorar.addEventListener('click', () => ativarTab('explorar'));
+
+// ============ AGENTE EMOCIONAL ============
+const emojiEl = document.getElementById('agent-emoji');
+const stageEl = document.getElementById('emoji-stage');
+const statusEl = document.getElementById('agent-status');
+const textInput = document.getElementById('text-input');
+const charCount = document.getElementById('char-count');
+const btn = document.getElementById('translate-btn');
+const resultCard = document.getElementById('result-card');
+const resultEmoji = document.getElementById('result-emoji-inline');
+const resultEmotion = document.getElementById('result-emotion');
+const resultCategoria = document.getElementById('result-categoria');
+const resultConfianca = document.getElementById('result-confianca');
+const resultExplicacao = document.getElementById('result-explicacao');
+const resultAtitude = document.getElementById('result-atitude');
+const historyZone = document.getElementById('history-zone');
+const historyList = document.getElementById('history-list');
+
+const REPOUSO = "😌";
+const OUVINDO = "🙈";
+const PENSANDO = "🤔";
+
+let ultimaEmocaoDetectada = null;
+
+function trocarEmoji(novoEmoji){
+  if(prefersReducedMotion){
+    emojiEl.textContent = novoEmoji;
+    return;
+  }
+  emojiEl.classList.add('emoji-morph-out');
+  setTimeout(() => {
+    emojiEl.textContent = novoEmoji;
+    emojiEl.classList.remove('emoji-morph-out');
+  }, 180);
+}
+
+textInput.addEventListener('input', () => {
+  charCount.textContent = textInput.value.length;
+
+  // se o campo for esvaziado (usuário apagou tudo), volta ao estado inicial
+  if(textInput.value.trim().length === 0){
+    resetParaInicio();
+  }
+});
+
+textInput.addEventListener('focus', () => {
+  if(!stageEl.classList.contains('thinking')){
+    trocarEmoji(OUVINDO);
+    statusEl.textContent = "ouvindo, sem julgar";
+  }
+});
+
+textInput.addEventListener('blur', () => {
+  if(!stageEl.classList.contains('thinking') && !resultCard.classList.contains('show')){
+    trocarEmoji(REPOUSO);
+    statusEl.textContent = "pronto para ouvir";
+  }
+});
+
+function formatarHora(){
+  const d = new Date();
+  return d.getHours().toString().padStart(2,'0') + ':' + d.getMinutes().toString().padStart(2,'0');
+}
+
+function renderHistorico(){
+  if(sessionHistory.length === 0){
+    historyZone.style.display = 'none';
+    return;
+  }
+  historyZone.style.display = 'flex';
+  historyZone.style.flexDirection = 'column';
+  historyList.innerHTML = '';
+  for(let i = sessionHistory.length - 1; i >= 0; i--){
+    const item = sessionHistory[i];
+    const el = document.createElement('div');
+    el.className = 'history-item';
+
+    const emojiSpan = document.createElement('span');
+    emojiSpan.className = 'history-emoji';
+    emojiSpan.textContent = item.emoji;
+
+    const meta = document.createElement('div');
+    meta.className = 'history-meta';
+
+    const emotionSpan = document.createElement('span');
+    emotionSpan.className = 'history-emotion';
+    emotionSpan.textContent = item.emocao;
+
+    const snippetSpan = document.createElement('span');
+    snippetSpan.className = 'history-snippet';
+    snippetSpan.textContent = item.snippet; // textContent evita qualquer injeção de HTML
+
+    meta.appendChild(emotionSpan);
+    meta.appendChild(snippetSpan);
+
+    const timeSpan = document.createElement('span');
+    timeSpan.className = 'history-time';
+    timeSpan.textContent = item.hora;
+
+    el.appendChild(emojiSpan);
+    el.appendChild(meta);
+    el.appendChild(timeSpan);
+    el.addEventListener('click', () => abrirModalPorNome(item.emocao));
+    historyList.appendChild(el);
+  }
+}
+
+function resetParaInicio(){
+  resultCard.classList.remove('show');
+  stageEl.classList.remove('thinking');
+  trocarEmoji(REPOUSO);
+  statusEl.textContent = "pronto para ouvir";
+  ultimaEmocaoDetectada = null;
+}
+
+btn.addEventListener('click', (e) => {
+  const texto = textInput.value.trim();
+  if(!texto){
+    textInput.focus();
+    return;
+  }
+
+  if(!prefersReducedMotion){
+    const rect = btn.getBoundingClientRect();
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    const size = Math.max(rect.width, rect.height) * 1.4;
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 650);
+  }
+
+  btn.disabled = true;
+  resultCard.classList.remove('show');
+  stageEl.classList.add('thinking');
+  trocarEmoji(PENSANDO);
+  statusEl.textContent = "processando...";
+
+  setTimeout(() => {
+    const resultado = detectarEmocao(texto);
+    ultimaEmocaoDetectada = resultado;
+
+    stageEl.classList.remove('thinking');
+    trocarEmoji(resultado.emoji);
+    statusEl.textContent = "emoção traduzida";
+
+    resultEmoji.textContent = resultado.emoji;
+    resultEmotion.textContent = resultado.emocao;
+    resultCategoria.textContent = CATEGORY_LABELS[resultado.categoria] || '';
+
+    const confiancaLabels = { forte:"correspondência forte", moderada:"correspondência moderada", baixa:"leitura mais livre" };
+    resultConfianca.textContent = confiancaLabels[resultado.confianca] || '';
+    resultConfianca.className = 'confidence-badge confidence-' + resultado.confianca;
+
+    resultExplicacao.textContent = resultado.explicacao;
+    resultAtitude.textContent = resultado.atitude;
+
+    resultCard.classList.add('show');
+    btn.disabled = false;
+
+    sessionHistory.push({
+      emocao: resultado.emocao,
+      emoji: resultado.emoji,
+      snippet: texto.length > 40 ? texto.slice(0,40) + '…' : texto,
+      hora: formatarHora()
+    });
+    renderHistorico();
+  }, 1500);
+});
+
+document.getElementById('try-again-btn').addEventListener('click', () => {
+  textInput.value = '';
+  charCount.textContent = '0';
+  resetParaInicio();
+  window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+  textInput.focus();
+});
+
+document.getElementById('explore-emotion-btn').addEventListener('click', () => {
+  if(ultimaEmocaoDetectada){
+    abrirModalPorNome(ultimaEmocaoDetectada.emocao);
+  }
+});
+
+// ============ EXPLORAR ============
+const grid = document.getElementById('emotion-grid');
+const emptyState = document.getElementById('empty-state');
+const searchInput = document.getElementById('search-input');
+const catScroller = document.getElementById('category-scroller');
+
+let categoriaAtiva = 'todas';
+let termoBusca = '';
+
+function renderGrid(){
+  const termo = termoBusca.trim().toLowerCase();
+  const filtradas = EMOCOES.filter(e => {
+    const passaCategoria = categoriaAtiva === 'todas' || e.categoria === categoriaAtiva;
+    if(!passaCategoria) return false;
+    if(!termo) return true;
+    if(e.emocao.toLowerCase().includes(termo)) return true;
+    return e.keywords.some(k => k.toLowerCase().includes(termo));
+  });
+
+  grid.innerHTML = '';
+  emptyState.style.display = filtradas.length === 0 ? 'block' : 'none';
+
+  for(const e of filtradas){
+    const tile = document.createElement('button');
+    tile.className = 'emotion-tile';
+
+    const emojiSpan = document.createElement('span');
+    emojiSpan.className = 'tile-emoji';
+    emojiSpan.textContent = e.emoji;
+
+    const nameSpan = document.createElement('span');
+    nameSpan.className = 'tile-name';
+    nameSpan.textContent = e.emocao;
+
+    tile.appendChild(emojiSpan);
+    tile.appendChild(nameSpan);
+    tile.addEventListener('click', () => abrirModal(e));
+    grid.appendChild(tile);
+  }
+}
+
+catScroller.addEventListener('click', (e) => {
+  const chip = e.target.closest('.cat-chip');
+  if(!chip) return;
+  catScroller.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+  chip.classList.add('active');
+  categoriaAtiva = chip.dataset.cat;
+  renderGrid();
+});
+
+searchInput.addEventListener('input', () => {
+  termoBusca = searchInput.value;
+  renderGrid();
+});
+
+// ============ MODAL ============
+const modalBackdrop = document.getElementById('modal-backdrop');
+const modalEmoji = document.getElementById('modal-emoji');
+const modalTitle = document.getElementById('modal-title');
+const modalCategoria = document.getElementById('modal-categoria');
+const modalExplicacao = document.getElementById('modal-explicacao');
+const modalAtitude = document.getElementById('modal-atitude');
+const modalClose = document.getElementById('modal-close');
+const modalScroll = document.querySelector('.modal-scroll');
+
+function abrirModal(e){
+  modalEmoji.textContent = e.emoji;
+  modalTitle.textContent = e.emocao;
+  modalCategoria.textContent = CATEGORY_LABELS[e.categoria] || '';
+  modalExplicacao.textContent = e.explicacoes[0];
+  modalAtitude.textContent = e.atitudes[0];
+  modalBackdrop.classList.add('show');
+  if(modalScroll) modalScroll.scrollTop = 0;
+}
+
+function abrirModalPorNome(nome){
+  const e = EMOCOES.find(x => x.emocao === nome);
+  if(e){
+    ativarTab('explorar');
+    abrirModal(e);
+  }
+}
+
+modalClose.addEventListener('click', () => modalBackdrop.classList.remove('show'));
+modalBackdrop.addEventListener('click', (e) => {
+  if(e.target === modalBackdrop) modalBackdrop.classList.remove('show');
+});
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape') modalBackdrop.classList.remove('show');
+});
+
+// ============ INIT ============
+renderGrid();
+
+const brandHome = document.getElementById('brand-home');
+function irParaInicio(){
+  ativarTab('traduzir');
+  textInput.value = '';
+  charCount.textContent = '0';
+  resetParaInicio();
+  window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+}
+brandHome.addEventListener('click', irParaInicio);
+brandHome.addEventListener('keydown', (e) => {
+  if(e.key === 'Enter' || e.key === ' '){
+    e.preventDefault();
+    irParaInicio();
+  }
+});
+brandHome.style.cursor = 'pointer';
+
+</script>
+</body>
+</html>
